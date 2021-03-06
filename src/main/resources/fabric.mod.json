@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "defaultsettings",
+  "version": "${version}",
+  "accessWidener" : "defaultsettings.accesswidener",
+  "name": "DefaultSettings",
+  "description": "Keep your game's local settings in case of an update to your modpack",
+  "authors": [
+    "PT400C - Jomcraft Network"
+  ],
+  "contributors": [
+    "Compaszer - Jomcraft Network"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/defaultsettings",
+    "sources": "https://gitlab.com/jomcraft-sources/defaultsettings",
+    "issues": "https://gitlab.com/jomcraft-sources/defaultsettings/-/issues"
+  },
+
+  "license": "Apache License 2.0",
+  "icon": "assets/defaultsettings/defaultsettings.png",
+  "environment": "client",
+
+  "entrypoints": {
+    "main": [
+      "de.pt400c.defaultsettings.DefaultSettings"
+    ],
+	"preLaunch": [
+      "de.pt400c.defaultsettings.PreLaunch"
+    ]
+  },
+  "mixins": [
+    "defaultsettings.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  }
+}
