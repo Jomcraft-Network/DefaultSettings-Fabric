@@ -26,17 +26,9 @@ public class DefaultSettings implements ModInitializer {
 
 	public static final String MODID = "defaultsettings";
 	public static final Logger log = LogManager.getLogger(DefaultSettings.MODID);
-	//public static final String VERSION = getModVersion();
 	public static final String USER_AGENT = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2";
 	public static Map<String, KeyContainer> keyRebinds = new HashMap<String, KeyContainer>();
-	public static String BUILD_ID = "Unknown";
-	public static String BUILD_TIME = "Unknown";
 	public static DefaultSettings instance;
-	public static final boolean debug = false;
-	public static boolean init = false;
-	public static Class<?> alphaTest;
-	public static int targetMS = 9;
-	public static boolean compatibilityMode = false;
 	
 	@Override
     public void onInitialize()
@@ -56,21 +48,9 @@ public class DefaultSettings implements ModInitializer {
 		} catch (NullPointerException e) {
 			DefaultSettings.log.log(Level.ERROR, "An exception occurred while starting up the game (Post):", e);
 		}}
-        		
-        		
-        		
+        				
         		);
-        /*
-        
-		//ClientStarted
-		try {
-			FileUtil.restoreKeys(true);
-		} catch (IOException e) {
-			DefaultSettings.log.log(Level.ERROR, "An exception occurred while starting up the game (Post):", e);
-		} catch (NullPointerException e) {
-			DefaultSettings.log.log(Level.ERROR, "An exception occurred while starting up the game (Post):", e);
-		}*/
-		
+
 		(new Thread() {
 
 			@Override

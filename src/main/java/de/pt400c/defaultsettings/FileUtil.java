@@ -236,7 +236,6 @@ public class FileUtil {
 			 } catch (Exception e) {
 				DefaultSettings.log.log(Level.ERROR, "Exception at processing startup: ", e);  	
 		     }
-			DefaultSettings.compatibilityMode = privateJson.compatibilityMode;
 			
 		}else {
 			

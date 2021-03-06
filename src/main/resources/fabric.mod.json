@@ -12,9 +12,9 @@
     "Compaszer - Jomcraft Network"
   ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/defaultsettings",
-    "sources": "https://gitlab.com/jomcraft-sources/defaultsettings",
-    "issues": "https://gitlab.com/jomcraft-sources/defaultsettings/-/issues"
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/defaultsettings-fabric",
+    "sources": "https://gitlab.com/jomcraft-sources/defaultsettings-fabric",
+    "issues": "https://gitlab.com/jomcraft-sources/defaultsettings-fabric/-/issues"
   },
 
   "license": "Apache License 2.0",

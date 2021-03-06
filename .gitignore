@@ -13,6 +13,10 @@ classes/
 
 logs/
 
+keyring.gpg
+
+keystore.jks
+
 .idea/
 *.iml
 *.ipr
