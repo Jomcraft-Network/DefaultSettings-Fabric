@@ -12,11 +12,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.GameRuleCommand;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
@@ -26,7 +23,7 @@ public class CommandDefaultSettings {
 	private static ThreadPoolExecutor tpe = new ThreadPoolExecutor(1, 3, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 	private static final SimpleCommandExceptionType FAILED_EXCEPTION = new SimpleCommandExceptionType(new LiteralText(Formatting.RED + "Please wait until the last request has finished"));
 
-	protected static void register(CommandDispatcher dispatcher) {
+	protected static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
 		LiteralArgumentBuilder<ServerCommandSource> literalargumentbuilder = CommandManager.literal("defaultsettings");
 		
 		
@@ -34,13 +31,14 @@ public class CommandDefaultSettings {
 	         return saveProcess(command.getSource(), null);
 	      }).then(CommandManager.argument("argument", StringArgumentType.string()).executes((command) -> {
 	         return saveProcess(command.getSource(), StringArgumentType.getString(command, "argument"));
-	      }))).then(CommandManager.literal("export-mode").executes((command) -> {
+	      })))/*.then(CommandManager.literal("export-mode").executes((command) -> {
 		         return exportMode(command.getSource(), null);
-		      }));
-		dispatcher.register(literalargumentbuilder);
-	//	event.getServer().getCommandManager().getDispatcher().register(literalargumentbuilder);
+		      }))*/;
+		LiteralCommandNode<ServerCommandSource> node = dispatcher.register(literalargumentbuilder);
+		
+		dispatcher.register(CommandManager.literal("ds").redirect(node));
 	}
-	
+	/*
 	private static int exportMode(ServerCommandSource source, String argument) throws CommandSyntaxException {
 		
 		if (tpe.getQueue().size() > 0)
@@ -69,7 +67,7 @@ public class CommandDefaultSettings {
 		});
 		return 0;
 
-	}
+	}*/
 	
 	private static int saveProcess(ServerCommandSource source, String argument) throws CommandSyntaxException {
 
@@ -105,8 +103,8 @@ public class CommandDefaultSettings {
 			@Override
 			public void run() {
 				try {
-					FileUtil.saveOptions();
-					source.sendFeedback(new LiteralText(Formatting.GREEN + "Successfully saved the default game options"), true);
+					boolean optifine = FileUtil.saveOptions();
+					source.sendFeedback(new LiteralText(Formatting.GREEN + "Successfully saved the default game options" + (optifine ? " (+ Optifine)" : "")), true);
 				} catch (Exception e) {
 					DefaultSettings.log.log(Level.ERROR, "An exception occurred while saving the default game options:", e);
 					source.sendFeedback(new LiteralText(Formatting.RED + "Couldn't save the default game options!"), true);
@@ -130,6 +128,12 @@ public class CommandDefaultSettings {
 
 				if (issue.getBoolean())
 					source.sendFeedback(new LiteralText(Formatting.YELLOW + "Please inspect the log files for further information!"), true);
+				else
+					try {
+						FileUtil.checkMD5();
+					} catch (IOException e) {
+						DefaultSettings.log.log(Level.ERROR, "An exception occurred while saving your configuration:", e);
+					}
 			}
 		});
 

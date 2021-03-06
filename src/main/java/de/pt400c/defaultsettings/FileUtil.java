@@ -41,7 +41,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import de.pt400c.defaultsettings.mixin.ExampleMixin;
+import de.pt400c.defaultsettings.mixin.DefaultSettingsMixin;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -772,7 +772,7 @@ System.out.println("WTF!!!!!");
 					KeyContainer container = DefaultSettings.keyRebinds.get(keyBinding.getTranslationKey());
 					//setField("keyModifierDefault", KeyBinding.class, keyBinding, container.modifier);
 keyBinding.boundKey = container.input;
-					((ExampleMixin) keyBinding).setDefaultKey(container.input);
+					((DefaultSettingsMixin) keyBinding).setDefaultKey(container.input);
 					//keyBinding.defaultKey = container.input;
 					System.out.println(container.input + "    " + keyBinding.getTranslationKey());
 					System.out.println( keyBinding.getDefaultKey());
@@ -956,7 +956,7 @@ keyBinding.boundKey = container.input;
 		}
 	}
 
-	public static void saveOptions() throws NullPointerException, IOException {
+	public static boolean saveOptions() throws NullPointerException, IOException {
 		MinecraftClient.getInstance().options.write();
 		PrintWriter writer = null;
 		BufferedReader reader = null;
@@ -986,7 +986,7 @@ keyBinding.boundKey = container.input;
 		}
 		
 		if(!new File(mcDataDir, "optionsof.txt").exists())
-			return;
+			return false;
 
 		try {
 			writer = new PrintWriter(new FileWriter(new File(getMainFolder(), activeProfile + "/optionsof.txt")));
@@ -1009,6 +1009,8 @@ keyBinding.boundKey = container.input;
 				throw e;
 			}
 		}	
+		
+		return true;
 	}
 
 	public static void saveServers() throws IOException {
