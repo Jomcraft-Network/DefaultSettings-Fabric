@@ -12,6 +12,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -38,48 +40,18 @@ public class CommandDefaultSettings {
 		
 		dispatcher.register(CommandManager.literal("ds").redirect(node));
 	}
-	/*
-	private static int exportMode(ServerCommandSource source, String argument) throws CommandSyntaxException {
-		
-		if (tpe.getQueue().size() > 0)
-			throw FAILED_EXCEPTION.create();
-		
-		boolean exportMode = FileUtil.getMainJSON().getExportMode();
-		tpe.execute(new ThreadRunnable(source, null) {
-
-			@SuppressWarnings("static-access")
-			@Override
-			public void run() {
-				try {
-					if (exportMode) {
-						FileUtil.restoreConfigs();
-						source.sendFeedback(new LiteralText(Formatting.GREEN + "Successfully deactivated the export-mode"), true);
-					} else {
-						FileUtil.moveAllConfigs();
-						FileUtil.checkMD5();
-						source.sendFeedback(new LiteralText(Formatting.GREEN + "Successfully activated the export-mode"), true);
-					}
-				} catch (IOException e) {
-					DefaultSettings.getInstance().log.log(Level.ERROR, "An exception occurred while trying to move the configs:", e);
-					source.sendFeedback(new LiteralText(Formatting.RED + "Couldn't switch the export-mode"), true);
-				}
-			}
-		});
-		return 0;
-
-	}*/
 	
 	private static int saveProcess(ServerCommandSource source, String argument) throws CommandSyntaxException {
 
 		if (tpe.getQueue().size() > 0)
 			throw FAILED_EXCEPTION.create();
 		
-		if((FileUtil.keysFileExist() || FileUtil.optionsFilesExist() || FileUtil.serversFileExists()) && (argument == null || !argument.equals("-o"))) {
+		if((FileUtil.keysFileExist() || FileUtil.optionsFilesExist() || FileUtil.serversFileExists()) && (argument == null || (!argument.equals("-o") && !argument.equals("-of")))) {
 			source.sendFeedback(new LiteralText(Formatting.GOLD + "These files already exist! If you want to overwrite"), true);
 			source.sendFeedback(new LiteralText(Formatting.GOLD + "them, add the '-o' argument"), true);
 			return 0;
 		}
-
+		
 		MutableBoolean issue = new MutableBoolean(false);
 
 		tpe.execute(new ThreadRunnable(source, issue) {
@@ -87,9 +59,29 @@ public class CommandDefaultSettings {
 			@Override
 			public void run() {
 				try {
-					FileUtil.saveKeys();
+					boolean somethingChanged = FileUtil.checkChanged();
+
+					if(somethingChanged && !argument.equals("-of")) {
+						source.sendFeedback(new LiteralText(Formatting.GOLD + "\n\n"), true);
+						source.sendFeedback(new LiteralText(Formatting.GOLD + "You seem to have updated certain config files!"), true);
+						source.sendFeedback(new LiteralText(Formatting.GOLD + "Users who already play your pack won't (!) receive those changes.\n"), true);
+						source.sendFeedback(new LiteralText(Formatting.GOLD + "If you want to ship the new configs to those players too,"), true);
+						source.sendFeedback(new LiteralText(Formatting.GOLD + "append the '-of' argument instead of '-o'"), true);
+					}
+				} catch (Exception e) {
+					DefaultSettings.log.log(Level.ERROR, "An exception occurred while saving the key configuration:", e);
+				}
+			}
+		});
+
+		tpe.execute(new ThreadRunnable(source, issue) {
+
+			@Override
+			public void run() {
+				try {
+					FileUtil.saveKeys(false);
 					source.sendFeedback(new LiteralText(Formatting.GREEN + "Successfully saved the key configuration"), true);
-					FileUtil.restoreKeys(true);
+					FileUtil.restoreKeys(true, false);
 				} catch (Exception e) {
 					DefaultSettings.log.log(Level.ERROR, "An exception occurred while saving the key configuration:", e);
 					source.sendFeedback(new LiteralText(Formatting.RED + "Couldn't save the key configuration!"), true);
@@ -103,7 +95,7 @@ public class CommandDefaultSettings {
 			@Override
 			public void run() {
 				try {
-					boolean optifine = FileUtil.saveOptions();
+					boolean optifine = FileUtil.saveOptions(false);
 					source.sendFeedback(new LiteralText(Formatting.GREEN + "Successfully saved the default game options" + (optifine ? " (+ Optifine)" : "")), true);
 				} catch (Exception e) {
 					DefaultSettings.log.log(Level.ERROR, "An exception occurred while saving the default game options:", e);
@@ -118,7 +110,7 @@ public class CommandDefaultSettings {
 			@Override
 			public void run() {
 				try {
-					FileUtil.saveServers();
+					FileUtil.saveServers(false);
 					source.sendFeedback(new LiteralText(Formatting.GREEN + "Successfully saved the server list"), true);
 				} catch (Exception e) {
 					DefaultSettings.log.log(Level.ERROR, "An exception occurred while saving the server list:", e);
@@ -130,7 +122,8 @@ public class CommandDefaultSettings {
 					source.sendFeedback(new LiteralText(Formatting.YELLOW + "Please inspect the log files for further information!"), true);
 				else
 					try {
-						FileUtil.checkMD5();
+						boolean updateExisting = argument != null && argument.equals("-of");
+						FileUtil.checkMD5(updateExisting);
 					} catch (IOException e) {
 						DefaultSettings.log.log(Level.ERROR, "An exception occurred while saving your configuration:", e);
 					}

@@ -1,6 +1,7 @@
 package de.pt400c.defaultsettings;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -14,6 +15,7 @@ import java.io.Reader;
 import java.lang.reflect.Field;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,6 +65,7 @@ public class FileUtil {
 	public volatile static boolean servers_exists = false;
 	public static String activeProfile = "Default";
 	public static boolean otherCreator = false;
+	public static boolean firstBootUp;
 	public static final FileFilter fileFilterModular = new FileFilter() {
 
 		@Override
@@ -326,7 +329,7 @@ public class FileUtil {
 		activeProfile = privateJson.currentProfile;
 		
 		final File options = new File(mcDataDir, "options.txt");
-		boolean firstBootUp = !options.exists();
+		firstBootUp = !options.exists();
 		if (firstBootUp) {
 			restoreOptions();
 			if(!exportMode())
@@ -373,7 +376,7 @@ public class FileUtil {
 			activeProfile = profileName;
 
 			FileUtil.moveAllConfigs();
-			FileUtil.checkMD5();
+			FileUtil.checkMD5(true);
 			
 			String[] extensions = new String[] { "zip"};
 			List<Path> oldestFiles = Collections.emptyList();
@@ -454,6 +457,7 @@ public class FileUtil {
 		if(getMainJSON().mainProfile.equals("!NEW!")) {
 			
 			new File(getMainFolder(), "Default").mkdir();
+			System.out.println("WTF21312312332");
 			
 			FileFilter ffm = new FileFilter() {
 
@@ -527,7 +531,7 @@ public class FileUtil {
 					if(opt.equals("options.txt")) {
 						restoreOptions();
 					}else if(opt.equals("keys.txt")) {
-						restoreKeys(false);
+						restoreKeys(false, false);
 					}else if(opt.equals("optionsof.txt")) {
 						restoreOptionsOF();
 					}else if(opt.equals("servers.dat")) {
@@ -733,7 +737,7 @@ public class FileUtil {
 		}
 	}
 	
-	public static void restoreKeys(boolean update) throws NullPointerException, IOException, NumberFormatException {
+	public static void restoreKeys(boolean update, boolean initial) throws NullPointerException, IOException, NumberFormatException {
 
 		DefaultSettings.keyRebinds.clear();
 		final File keysFile = new File(getMainFolder(), activeProfile + "/keys.txt");
@@ -770,41 +774,46 @@ System.out.println("WTF!!!!!");
 				if (DefaultSettings.keyRebinds.containsKey(keyBinding.getTranslationKey())) {
 					KeyContainer container = DefaultSettings.keyRebinds.get(keyBinding.getTranslationKey());
 					//setField("keyModifierDefault", KeyBinding.class, keyBinding, container.modifier);
-keyBinding.boundKey = container.input;
+					
+					
+					
+					if(initial)
+						keyBinding.boundKey = container.input;
+					
+					
+					
 					((DefaultSettingsMixin) keyBinding).setDefaultKey(container.input);
 					//keyBinding.defaultKey = container.input;
+					
+					
+					
+					
 					System.out.println(container.input + "    " + keyBinding.getTranslationKey());
-					System.out.println( keyBinding.getDefaultKey());
+					System.out.println(keyBinding.getDefaultKey());
+					
+					
+					
 				//	setField(devEnv ? "keyCodeDefault" : "field_151472_e", KeyBinding.class, keyBinding, container.input);
-					KeyBinding.keyToBindings.remove(keyBinding);
-					KeyBinding.keyToBindings.put(container.input, keyBinding);
+					
+					
+					
+				//	KeyBinding.keyToBindings.remove(keyBinding);
+
+					//KeyBinding.keyToBindings.put(container.input, keyBinding);
+					
+					
 					//keyBinding.setKeyModifierAndCode(keyBinding.getDefaultKey(), container.input);
 				}
 			}
-			KeyBinding.keyToBindings.clear();
+			
+			
+			//KeyBinding.keyToBindings.clear();
 
-		      for(KeyBinding keybinding : KeyBinding.keysById.values()) {
-		    	  KeyBinding.keyToBindings.put(keybinding.boundKey, keybinding);
-		      }
+		   //   for(KeyBinding keybinding : KeyBinding.keysById.values()) {
+		   // 	  KeyBinding.keyToBindings.put(keybinding.boundKey, keybinding);
+		  //    }
 }
 			//KeyBinding.resetKeyBindingArrayAndHash();
-		}
-	}
-	
-	@SuppressWarnings("rawtypes")
-	private static void setField(String name, Class clazz, Object obj, Object value) {
-		try {
-			Field field = clazz.getDeclaredField(name);
-			field.setAccessible(true);
-			field.set(obj, value);
-		} catch (IllegalAccessException e) {
-			DefaultSettings.log.log(Level.ERROR, "Reflection exception: ", e);
-		} catch (IllegalArgumentException e) {
-			DefaultSettings.log.log(Level.ERROR, "Reflection exception: ", e);
-		} catch (NoSuchFieldException e) {
-			DefaultSettings.log.log(Level.ERROR, "Reflection exception: ", e);
-		} catch (SecurityException e) {
-			DefaultSettings.log.log(Level.ERROR, "Reflection exception: ", e);
 		}
 	}
 	
@@ -939,11 +948,11 @@ keyBinding.boundKey = container.input;
 		}
 	}
 	
-	public static void saveKeys() throws IOException, NullPointerException {
+	public static void saveKeys(boolean temp) throws IOException, NullPointerException {
 		PrintWriter writer = null;
 		try {
-			writer = new PrintWriter(new FileWriter(new File(getMainFolder(), activeProfile + "/keys.txt")));
-			for (KeyBinding keyBinding : MinecraftClient.getInstance().options.keysAll) 
+			writer = new PrintWriter(new FileWriter(new File(getMainFolder(), activeProfile + "/keys.txt" + (temp ? "_temp" : ""))));
+			for (KeyBinding keyBinding : DefaultSettings.MC.options.keysAll) 
 				writer.print(keyBinding.getTranslationKey() + ":" + keyBinding.boundKey.toString() + "\n");
 
 		} catch (IOException e) {
@@ -955,12 +964,12 @@ keyBinding.boundKey = container.input;
 		}
 	}
 
-	public static boolean saveOptions() throws NullPointerException, IOException {
-		MinecraftClient.getInstance().options.write();
+	public static boolean saveOptions(boolean temp) throws NullPointerException, IOException {
+		DefaultSettings.MC.options.write();
 		PrintWriter writer = null;
 		BufferedReader reader = null;
 		try {
-			writer = new PrintWriter(new FileWriter(new File(getMainFolder(), activeProfile + "/options.txt")));
+			writer = new PrintWriter(new FileWriter(new File(getMainFolder(), activeProfile + "/options.txt" + (temp ? "_temp" : ""))));
 			reader = new BufferedReader(new FileReader(new File(mcDataDir, "options.txt")));
 			String line;
 			while ((line = reader.readLine()) != null) {
@@ -988,7 +997,7 @@ keyBinding.boundKey = container.input;
 			return false;
 
 		try {
-			writer = new PrintWriter(new FileWriter(new File(getMainFolder(), activeProfile + "/optionsof.txt")));
+			writer = new PrintWriter(new FileWriter(new File(getMainFolder(), activeProfile + "/optionsof.txt" + (temp ? "_temp" : ""))));
 			reader = new BufferedReader(new FileReader(new File(mcDataDir, "optionsof.txt")));
 			String line;
 			while ((line = reader.readLine()) != null)
@@ -1012,15 +1021,91 @@ keyBinding.boundKey = container.input;
 		return true;
 	}
 
-	public static void saveServers() throws IOException {
+	public static void saveServers(boolean temp) throws IOException {
 		final File serversFile = new File(mcDataDir, "servers.dat");
 		if (serversFile.exists()) {
 			try {
-				FileUtils.copyFile(serversFile, new File(getMainFolder(), activeProfile + "/servers.dat"));
+				FileUtils.copyFile(serversFile, new File(getMainFolder(), activeProfile + "/servers.dat" + (temp ? "_temp" : "")));
 			} catch (IOException e) {
 				throw e;
 			}
 		}
+	}
+	
+	public static InputStream getServersStream() throws IOException {
+		final File serversFile = new File(mcDataDir, "servers.dat");
+		if (serversFile.exists()) {
+			return new FileInputStream(serversFile);
+		}
+		return null;
+	}
+	
+	public static InputStream getOptionsOFStream() throws IOException {
+		final File optionsFile = new File(mcDataDir, "optionsof.txt");
+		if (optionsFile.exists()) {
+			return new FileInputStream(optionsFile);
+		}
+		return null;
+	}
+	
+	public static InputStream getKeysStream() throws IOException, NullPointerException {
+		FileInputStream stream = null;
+		PrintWriter writer = null;
+		File file = new File(getMainFolder(), activeProfile + "/keys.txt_temp");
+		try {
+			writer = new PrintWriter(new FileWriter(file));
+			for (KeyBinding keyBinding : DefaultSettings.MC.options.keysAll)
+				writer.print(keyBinding.getTranslationKey() + ":" + keyBinding.boundKey.toString() + "\n");
+			stream = new FileInputStream(file);
+		} catch (IOException e) {
+			//throw e;
+			e.printStackTrace();
+		} catch (NullPointerException e) {
+			//throw e;
+			e.printStackTrace();
+		} finally {
+			writer.close();
+		}
+
+		return stream;
+	}
+	
+	public static InputStream getOptionsStream() throws IOException, NullPointerException {
+		final File keysFile = new File(mcDataDir, "options.txt");
+		FileInputStream stream = null;
+		if(keysFile.exists()) {
+			BufferedReader reader = null;
+			PrintWriter writer = null;
+			File file = new File(getMainFolder(), activeProfile + "/options.txt_temp");
+			try {
+				writer = new PrintWriter(new FileWriter(file));
+				reader = new BufferedReader(new FileReader(keysFile));
+				String line;
+				while ((line = reader.readLine()) != null) {
+					if (line.startsWith("key_"))
+						continue;
+					writer.print(line + "\n");
+
+				}
+				stream = new FileInputStream(file);
+			} catch (IOException e) {
+				throw e;
+			} catch (NullPointerException e) {
+				throw e;
+			} finally {
+				try {
+					reader.close();
+					writer.close();
+				
+				} catch (IOException e) {
+					throw e;
+				} catch (NullPointerException e) {
+					throw e;
+				}
+			}
+			return stream;
+		}
+		return null;
 	}
 	
 	public static boolean serversFileExists() {
@@ -1047,12 +1132,89 @@ keyBinding.boundKey = container.input;
 		return DigestUtils.md5Hex(is).toUpperCase();
 	}
 	
-	public static void checkMD5() throws FileNotFoundException, IOException {
+	public static boolean checkChanged() {
+		boolean ret = false;
+		try {
+
+			InputStream keys = getKeysStream();
+			InputStream options = getOptionsStream();
+			InputStream optionsOF = getOptionsOFStream();
+			InputStream servers = getServersStream();
+
+			String hashO = "";
+			String writtenHashO = "";
+			
+			if(options != null) {
+			
+				hashO = fileToHash(options);
+				writtenHashO = mainJson.hashes.get(activeProfile + "/options.txt");
+			}
+
+			String hashK = "";
+			String writtenHashK = "";
+			
+			if(keys != null) {
+			
+				hashK = fileToHash(keys);
+				writtenHashK = mainJson.hashes.get(activeProfile + "/keys.txt");
+			
+			}
+
+			String hashOF = "";
+			String writtenHashOF = "";
+			
+			if(optionsOF != null) {
+			
+				hashOF = fileToHash(optionsOF);
+				writtenHashOF = mainJson.hashes.get(activeProfile + "/optionsof.txt");
+
+			}
+			
+			String hashS = "";
+			String writtenHashS = "";
+			
+			if(servers != null) {
+			
+				hashS = fileToHash(servers);
+				writtenHashS = mainJson.hashes.get(activeProfile + "/servers.dat");
+
+			}
+			
+			if (mainJson.hashes.containsKey(activeProfile + "/options.txt") && !hashO.equals(writtenHashO)) {
+				ret = true;
+			} else if (mainJson.hashes.containsKey(activeProfile + "/keys.txt") && !hashK.equals(writtenHashK)) {
+				ret = true;
+			} else if (mainJson.hashes.containsKey(activeProfile + "/optionsof.txt") && !hashOF.equals(writtenHashOF)) {
+				ret = true;
+			} else if (mainJson.hashes.containsKey(activeProfile + "/servers.dat") && !hashS.equals(writtenHashS)) {
+				ret = true;
+			}
+			
+			options.close();
+			File fileO = new File(getMainFolder(), activeProfile + "/options.txt_temp");
+			Files.delete(fileO.toPath());
+			keys.close();
+			File fileK = new File(getMainFolder(), activeProfile + "/keys.txt_temp");
+			Files.delete(fileK.toPath());
+
+		} catch (Exception e) {
+			DefaultSettings.log.log(Level.ERROR, "Error while saving configs: ", e);
+		}
+
+		return ret;
+	}
+	
+	public static void checkMD5(boolean updateExisting) throws FileNotFoundException, IOException {
 		Collection<File> config = FileUtils.listFilesAndDirs(new File(getMainFolder(), activeProfile), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
 		for (File configFile : config) {
 			if (!configFile.isDirectory() && !configFile.getName().equals("ignore.json")) {
 				String relativePath = configFile.getPath().substring((mcDataDir.getPath().length()));
-				mainJson.hashes.put(activeProfile + "/" + relativePath.split("defaultsettings")[1].substring(1).split(activeProfile)[1].substring(1), fileToHash(new FileInputStream(configFile)));
+				String pathString = activeProfile + "/" + relativePath.split("defaultsettings")[1].substring(1).split(activeProfile)[1].substring(1);
+				if(!updateExisting && mainJson.hashes.containsKey(pathString)){
+					
+				} else {
+					mainJson.hashes.put(pathString, fileToHash(new FileInputStream(configFile)));
+				}
 			}
 		}
 		
@@ -1060,7 +1222,13 @@ keyBinding.boundKey = container.input;
 		for (File sharedFile : shared) {
 			if (!sharedFile.isDirectory() && !sharedFile.getName().equals("ignore.json")) {
 				String relativePath = sharedFile.getPath().substring((mcDataDir.getPath().length()));
-				mainJson.hashes.put(relativePath.split("defaultsettings")[1].substring(1), fileToHash(new FileInputStream(sharedFile)));
+				String pathString = relativePath.split("defaultsettings")[1].substring(1);
+				if(!updateExisting && mainJson.hashes.containsKey(pathString)){
+					
+				} else {
+					mainJson.hashes.put(pathString, fileToHash(new FileInputStream(sharedFile)));
+				}
+				
 			}
 		}
 
