@@ -264,7 +264,7 @@ public class FileUtil {
 			Date date = new Date();
 			SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 			
-			mainJson = new MainJSON().setVersion("1.0.0").setCreated(formatter.format(date));
+			mainJson = new MainJSON().setVersion("3.0.0").setCreated(formatter.format(date));
 			
 			mainJson.initPopup = true;
 		//	File fileDir = new File(mcDataDir, "config");
