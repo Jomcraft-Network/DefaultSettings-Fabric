@@ -1,9 +1,9 @@
-# Fabric Example Mod
+### DefaultSettings Fabric
 
-## Setup
+---
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
+DefaultSettings Fabric is a FabricMC mod created by the Jomcraft Network development team. Official downloads and further information may be found on our [curseforge page](https://www.curseforge.com/minecraft/mc-mods/defaultsettings-fabric).
 
-## License
+##### License
 
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+This project is licensed under the **Apache License Version 2.0** license. We do not grant any type of warranty.
