@@ -23,10 +23,10 @@
 
   "entrypoints": {
     "main": [
-      "de.pt400c.defaultsettings.DefaultSettings"
+      "net.jomcraft.defaultsettings.DefaultSettings"
     ],
 	"preLaunch": [
-      "de.pt400c.defaultsettings.PreLaunch"
+      "net.jomcraft.defaultsettings.PreLaunch"
     ]
   },
   "mixins": [

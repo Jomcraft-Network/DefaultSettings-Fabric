@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "de.pt400c.defaultsettings.mixin",
+  "package": "net.jomcraft.defaultsettings.mixin",
  
   "compatibilityLevel": "JAVA_8",
   "mixins": [

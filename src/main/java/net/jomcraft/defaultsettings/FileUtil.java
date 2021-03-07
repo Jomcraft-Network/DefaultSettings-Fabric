@@ -1,7 +1,6 @@
-package de.pt400c.defaultsettings;
+package net.jomcraft.defaultsettings;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -12,14 +11,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.lang.reflect.Field;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,10 +39,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import de.pt400c.defaultsettings.mixin.DefaultSettingsMixin;
 import net.fabricmc.loader.api.FabricLoader;
+import net.jomcraft.defaultsettings.mixin.DefaultSettingsMixin;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
@@ -160,10 +155,6 @@ public class FileUtil {
 		}
 
 		mainJson.save();
-	}
-	
-	private static void removeFromLists(List<String> list, String file) {
-		list.remove(file);
 	}
 	
 	public static void setActive(String name, boolean active) {
@@ -737,6 +728,7 @@ public class FileUtil {
 		}
 	}
 	
+	@SuppressWarnings("resource")
 	public static void restoreKeys(boolean update, boolean initial) throws NullPointerException, IOException, NumberFormatException {
 
 		DefaultSettings.keyRebinds.clear();
@@ -766,54 +758,25 @@ public class FileUtil {
 					throw e;
 				}
 			}
-if(update) {
+			
+			
+			if(update) {
 	
-System.out.println("WTF!!!!!");
 	
 			for (KeyBinding keyBinding : MinecraftClient.getInstance().options.keysAll) {
 				if (DefaultSettings.keyRebinds.containsKey(keyBinding.getTranslationKey())) {
 					KeyContainer container = DefaultSettings.keyRebinds.get(keyBinding.getTranslationKey());
-					//setField("keyModifierDefault", KeyBinding.class, keyBinding, container.modifier);
-					
-					
 					
 					if(initial)
 						keyBinding.boundKey = container.input;
 					
-					
-					
 					((DefaultSettingsMixin) keyBinding).setDefaultKey(container.input);
-					//keyBinding.defaultKey = container.input;
-					
-					
-					
-					
-					System.out.println(container.input + "    " + keyBinding.getTranslationKey());
-					System.out.println(keyBinding.getDefaultKey());
-					
-					
-					
-				//	setField(devEnv ? "keyCodeDefault" : "field_151472_e", KeyBinding.class, keyBinding, container.input);
-					
-					
-					
-				//	KeyBinding.keyToBindings.remove(keyBinding);
 
-					//KeyBinding.keyToBindings.put(container.input, keyBinding);
-					
-					
-					//keyBinding.setKeyModifierAndCode(keyBinding.getDefaultKey(), container.input);
 				}
 			}
 			
-			
-			//KeyBinding.keyToBindings.clear();
+			}
 
-		   //   for(KeyBinding keybinding : KeyBinding.keysById.values()) {
-		   // 	  KeyBinding.keyToBindings.put(keybinding.boundKey, keybinding);
-		  //    }
-}
-			//KeyBinding.resetKeyBindingArrayAndHash();
 		}
 	}
 	
@@ -948,11 +911,12 @@ System.out.println("WTF!!!!!");
 		}
 	}
 	
+	@SuppressWarnings("resource")
 	public static void saveKeys(boolean temp) throws IOException, NullPointerException {
 		PrintWriter writer = null;
 		try {
 			writer = new PrintWriter(new FileWriter(new File(getMainFolder(), activeProfile + "/keys.txt" + (temp ? "_temp" : ""))));
-			for (KeyBinding keyBinding : DefaultSettings.MC.options.keysAll) 
+			for (KeyBinding keyBinding : MinecraftClient.getInstance().options.keysAll) 
 				writer.print(keyBinding.getTranslationKey() + ":" + keyBinding.boundKey.toString() + "\n");
 
 		} catch (IOException e) {
@@ -964,8 +928,9 @@ System.out.println("WTF!!!!!");
 		}
 	}
 
+	@SuppressWarnings("resource")
 	public static boolean saveOptions(boolean temp) throws NullPointerException, IOException {
-		DefaultSettings.MC.options.write();
+		MinecraftClient.getInstance().options.write();
 		PrintWriter writer = null;
 		BufferedReader reader = null;
 		try {
@@ -1048,13 +1013,14 @@ System.out.println("WTF!!!!!");
 		return null;
 	}
 	
+	@SuppressWarnings("resource")
 	public static InputStream getKeysStream() throws IOException, NullPointerException {
 		FileInputStream stream = null;
 		PrintWriter writer = null;
 		File file = new File(getMainFolder(), activeProfile + "/keys.txt_temp");
 		try {
 			writer = new PrintWriter(new FileWriter(file));
-			for (KeyBinding keyBinding : DefaultSettings.MC.options.keysAll)
+			for (KeyBinding keyBinding : MinecraftClient.getInstance().options.keysAll)
 				writer.print(keyBinding.getTranslationKey() + ":" + keyBinding.boundKey.toString() + "\n");
 			stream = new FileInputStream(file);
 		} catch (IOException e) {

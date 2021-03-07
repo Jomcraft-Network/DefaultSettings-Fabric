@@ -1,4 +1,4 @@
-package de.pt400c.defaultsettings.mixin;
+package net.jomcraft.defaultsettings.mixin;
 
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;

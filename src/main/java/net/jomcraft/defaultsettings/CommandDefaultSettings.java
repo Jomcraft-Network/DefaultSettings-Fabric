@@ -1,19 +1,16 @@
-package de.pt400c.defaultsettings;
+package net.jomcraft.defaultsettings;
 
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.Level;
-
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -33,9 +30,7 @@ public class CommandDefaultSettings {
 	         return saveProcess(command.getSource(), null);
 	      }).then(CommandManager.argument("argument", StringArgumentType.string()).executes((command) -> {
 	         return saveProcess(command.getSource(), StringArgumentType.getString(command, "argument"));
-	      })))/*.then(CommandManager.literal("export-mode").executes((command) -> {
-		         return exportMode(command.getSource(), null);
-		      }))*/;
+	      })));
 		LiteralCommandNode<ServerCommandSource> node = dispatcher.register(literalargumentbuilder);
 		
 		dispatcher.register(CommandManager.literal("ds").redirect(node));

@@ -1,11 +1,9 @@
-package de.pt400c.defaultsettings;
+package net.jomcraft.defaultsettings;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import org.apache.logging.log4j.Level;
 
 public class MainJSON {

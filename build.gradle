@@ -6,8 +6,12 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-archivesBaseName = "defaultsettings"
-version = "3.0.0"
+archivesBaseName = "DefaultSettings"
+
+version = "1.16.x-3.0.0"
+
+def fileVersion = "3.0.0"
+
 group = "net.jomcraft"
 
 repositories {
@@ -28,10 +32,10 @@ minecraft {
 }
 
 processResources {
-	inputs.property "version", version
+	inputs.property "version", fileVersion
 
 	filesMatching("fabric.mod.json") {
-		expand "version": version
+		expand "version": fileVersion
 	}
 }
 
@@ -51,5 +55,17 @@ java {
 jar {
 	from("LICENSE") {
 		rename { "${it}_${project.archivesBaseName}"}
+	}
+	
+	manifest {
+		attributes([
+			"Specification-Title": "DefaultSettings",
+			"Specification-Vendor": "Jomcraft Network",
+			"Specification-Version": fileVersion,
+			"Implementation-Title": "DefaultSettings",
+			"Implementation-Version": fileVersion,
+			"Implementation-Vendor" : "Jomcraft Network",
+			"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+		])
 	}
 }

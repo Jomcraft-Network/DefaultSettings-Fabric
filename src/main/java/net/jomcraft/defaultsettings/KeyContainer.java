@@ -1,4 +1,4 @@
-package de.pt400c.defaultsettings;
+package net.jomcraft.defaultsettings;
 
 import net.minecraft.client.util.InputUtil;
 
