@@ -12,9 +12,7 @@ public class MainJSON {
 	private String version;
 	private String prevVersion;
 	protected boolean initPopup = false;
-	private boolean exportMode = false;
 	public String generatedBy = "<default>";
-	//public List<String> activeConfigs = new ArrayList<String>();
 	public HashMap<String, String> hashes = new HashMap<String, String>();
 	public String mainProfile = "!NEW!";
 	
@@ -24,10 +22,6 @@ public class MainJSON {
 	public MainJSON setVersion(String version) {
 		this.version = version;
 		return this;
-	}
-	
-	public void setExportMode(boolean exportMode) {
-		this.exportMode = exportMode;
 	}
 	
 	public MainJSON setCreated(String initially_created) {
@@ -42,10 +36,6 @@ public class MainJSON {
 	
 	public String getVersion() {
 		return this.version;
-	}
-	
-	public boolean getExportMode() {
-		return this.exportMode;
 	}
 
 	public String getPrevVersion() {

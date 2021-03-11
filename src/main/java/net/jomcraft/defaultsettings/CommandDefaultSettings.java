@@ -30,10 +30,57 @@ public class CommandDefaultSettings {
 	         return saveProcess(command.getSource(), null);
 	      }).then(CommandManager.argument("argument", StringArgumentType.string()).executes((command) -> {
 	         return saveProcess(command.getSource(), StringArgumentType.getString(command, "argument"));
-	      })));
+	      }))).then(CommandManager.literal("saveconfigs").executes((command) -> {
+		         return saveProcessConfigs(command.getSource(), null);
+		      }).then(CommandManager.argument("argument", StringArgumentType.string()).executes((command) -> {
+		         return saveProcessConfigs(command.getSource(), StringArgumentType.getString(command, "argument"));
+		      })));
 		LiteralCommandNode<ServerCommandSource> node = dispatcher.register(literalargumentbuilder);
 		
 		dispatcher.register(CommandManager.literal("ds").redirect(node));
+	}
+	
+	private static int saveProcessConfigs(ServerCommandSource source, String argument) throws CommandSyntaxException {
+
+		if (tpe.getQueue().size() > 0)
+			throw FAILED_EXCEPTION.create();
+		
+		MutableBoolean issue = new MutableBoolean(false);
+		
+		tpe.execute(new ThreadRunnable(source, issue) {
+
+			@Override
+			public void run() {
+				try {
+					boolean somethingChanged = FileUtil.checkChangedConfig();
+
+					if(somethingChanged && (argument == null || !argument.equals("-of"))) {
+						source.sendFeedback(new LiteralText(Formatting.GOLD + "\n\n"), true);
+						source.sendFeedback(new LiteralText(Formatting.GOLD + "You seem to have updated certain config files!"), true);
+						source.sendFeedback(new LiteralText(Formatting.GOLD + "Users who already play your pack won't (!) receive those changes.\n"), true);
+						source.sendFeedback(new LiteralText(Formatting.GOLD + "If you want to ship the new configs to those players too,"), true);
+						source.sendFeedback(new LiteralText(Formatting.GOLD + "append the '-of' argument"), true);
+					}
+				} catch (Exception e) {
+					DefaultSettings.log.log(Level.ERROR, "An exception occurred while saving the server list:", e);
+					source.sendFeedback(new LiteralText(Formatting.RED + "Couldn't save the config files!"), true);
+					issue.setBoolean(true);
+				}
+
+				if (issue.getBoolean())
+					source.sendFeedback(new LiteralText(Formatting.YELLOW + "Please inspect the log files for further information!"), true);
+				else
+					try {
+						source.sendFeedback(new LiteralText(Formatting.GREEN + "Successfully saved your mod configuration files"), true);
+						boolean updateExisting = argument != null && argument.equals("-of");
+						FileUtil.checkMD5(updateExisting, true);
+					} catch (IOException e) {
+						DefaultSettings.log.log(Level.ERROR, "An exception occurred while saving your configuration:", e);
+					}
+			}
+		});
+
+		return 0;
 	}
 	
 	private static int saveProcess(ServerCommandSource source, String argument) throws CommandSyntaxException {
@@ -74,7 +121,7 @@ public class CommandDefaultSettings {
 			@Override
 			public void run() {
 				try {
-					FileUtil.saveKeys(false);
+					FileUtil.saveKeys();
 					source.sendFeedback(new LiteralText(Formatting.GREEN + "Successfully saved the key configuration"), true);
 					FileUtil.restoreKeys(true, false);
 				} catch (Exception e) {
@@ -90,7 +137,7 @@ public class CommandDefaultSettings {
 			@Override
 			public void run() {
 				try {
-					boolean optifine = FileUtil.saveOptions(false);
+					boolean optifine = FileUtil.saveOptions();
 					source.sendFeedback(new LiteralText(Formatting.GREEN + "Successfully saved the default game options" + (optifine ? " (+ Optifine)" : "")), true);
 				} catch (Exception e) {
 					DefaultSettings.log.log(Level.ERROR, "An exception occurred while saving the default game options:", e);
@@ -105,7 +152,7 @@ public class CommandDefaultSettings {
 			@Override
 			public void run() {
 				try {
-					FileUtil.saveServers(false);
+					FileUtil.saveServers();
 					source.sendFeedback(new LiteralText(Formatting.GREEN + "Successfully saved the server list"), true);
 				} catch (Exception e) {
 					DefaultSettings.log.log(Level.ERROR, "An exception occurred while saving the server list:", e);
@@ -118,7 +165,7 @@ public class CommandDefaultSettings {
 				else
 					try {
 						boolean updateExisting = argument != null && argument.equals("-of");
-						FileUtil.checkMD5(updateExisting);
+						FileUtil.checkMD5(updateExisting, false);
 					} catch (IOException e) {
 						DefaultSettings.log.log(Level.ERROR, "An exception occurred while saving your configuration:", e);
 					}
