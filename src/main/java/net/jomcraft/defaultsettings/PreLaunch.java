@@ -11,11 +11,11 @@ public class PreLaunch implements PreLaunchEntrypoint {
 		try {
 			new File(FileUtil.mcDataDir, "config").mkdir();
 			FileUtil.restoreContents();
-			
+
 		} catch (Exception e) {
 			DefaultSettings.log.log(Level.ERROR, "An exception occurred while starting up the game:", e);
 		}
-		
+
 	}
-	
+
 }

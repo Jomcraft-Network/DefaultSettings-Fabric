@@ -1,9 +1,7 @@
 accessWidener	v1	named
 
-accessible    field    net/minecraft/client/options/KeyBinding    keyToBindings    Ljava/util/Map;
+accessible    field    net/minecraft/client/option/KeyBinding    keyToBindings    Ljava/util/Map;
 
-accessible    field    net/minecraft/client/options/KeyBinding    defaultKey    Lnet/minecraft/client/util/InputUtil$Key;
+accessible    field    net/minecraft/client/option/KeyBinding    boundKey    Lnet/minecraft/client/util/InputUtil$Key;
 
-accessible    field    net/minecraft/client/options/KeyBinding    boundKey    Lnet/minecraft/client/util/InputUtil$Key;
-
-accessible    field    net/minecraft/client/options/KeyBinding    keysById    Ljava/util/Map;
+accessible    field    net/minecraft/client/option/KeyBinding    keysById    Ljava/util/Map;
