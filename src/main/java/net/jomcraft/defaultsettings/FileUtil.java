@@ -957,8 +957,6 @@ public class FileUtil {
 			}
 		}
 
-		// set local stuff
-
 		if (!new File(mcDataDir, "optionsof.txt").exists()) {
 			return false;
 		}
