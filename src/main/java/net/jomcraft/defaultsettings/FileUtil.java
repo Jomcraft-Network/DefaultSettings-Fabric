@@ -490,7 +490,7 @@ public class FileUtil {
 		getSharedIgnore(new File(shared, "ignore.json"));
 	}
 
-	private static void copyAndHashPrivate() throws NullPointerException, IOException {
+	static void copyAndHashPrivate() throws NullPointerException, IOException {
 		ArrayList<String> toRemove = new ArrayList<String>();
 		for (String opt : optUse) {
 			File optFile = new File(getMainFolder(), activeProfile + "/" + opt);
@@ -508,6 +508,7 @@ public class FileUtil {
 					} else if (opt.equals("servers.dat")) {
 						restoreServers();
 					}
+
 					privateJson.currentHash.put(activeProfile + "/" + opt, mainJson.hashes.get(activeProfile + "/" + opt));
 
 				}
@@ -956,8 +957,11 @@ public class FileUtil {
 			}
 		}
 
-		if (!new File(mcDataDir, "optionsof.txt").exists())
+		// set local stuff
+
+		if (!new File(mcDataDir, "optionsof.txt").exists()) {
 			return false;
+		}
 
 		try {
 			writer = new PrintWriter(new FileWriter(new File(getMainFolder(), activeProfile + "/optionsof.txt")));
@@ -979,6 +983,10 @@ public class FileUtil {
 			} catch (NullPointerException e) {
 				throw e;
 			}
+		}
+
+		if (!new File(mcDataDir, "optionsshaders.txt").exists()) {
+			return false;
 		}
 
 		try {
