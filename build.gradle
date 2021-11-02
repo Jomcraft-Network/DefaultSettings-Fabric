@@ -1,6 +1,6 @@
 plugins {
 	id 'fabric-loom' version '0.8-SNAPSHOT'
-       id 'com.matthewprenger.cursegradle' version '1.4.0'
+	id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'maven-publish'
 }
 
@@ -77,6 +77,8 @@ curseforge {
 			changelogType = 'html'
 			releaseType = 'release'
 			addGameVersion '1.17.1'
+			addGameVersion 'Fabric'
+			addGameVersion 'Java 16'
 			mainArtifact(jar) {
 				displayName = "$archivesBaseName-$version"
 			}
@@ -91,8 +93,5 @@ curseforge {
 				displayName = "$archivesBaseName-$version-deobf"
 			}
 		}
-		options {
-    		detectNewerJava = true
-  		}
 	}
 }
