@@ -8,11 +8,11 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 archivesBaseName = "DefaultSettings"
 
-version = "1.16.x-3.0.3"
+version = "1.16.x-3.5.0-RC1"
 
-def fileVersion = "3.0.3"
+def fileVersion = "3.5.0-RC1"
 
-group = "net.jomcraft"
+group = "net.jomcraft.defaultsettings"
 
 repositories {
 
