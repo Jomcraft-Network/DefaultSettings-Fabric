@@ -796,7 +796,7 @@ public class FileUtil {
 					}
 				}
 
-				for (KeyBinding keyBinding : MinecraftClient.getInstance().options.keysAll) {
+				for (KeyBinding keyBinding : MinecraftClient.getInstance().options.allKeys) {
 					if (DefaultSettings.keyRebinds.containsKey(keyBinding.getTranslationKey())) {
 						KeyContainer container = DefaultSettings.keyRebinds.get(keyBinding.getTranslationKey());
 
@@ -956,7 +956,7 @@ public class FileUtil {
 		PrintWriter writer = null;
 		try {
 			writer = new PrintWriter(new FileWriter(new File(getMainFolder(), activeProfile + "/keys.txt")));
-			for (KeyBinding keyBinding : MinecraftClient.getInstance().options.keysAll)
+			for (KeyBinding keyBinding : MinecraftClient.getInstance().options.allKeys)
 				writer.print(keyBinding.getTranslationKey() + ":" + keyBinding.boundKey.toString() + "\n");
 
 		} catch (IOException e) {
@@ -1095,7 +1095,7 @@ public class FileUtil {
 		File file = new File(getMainFolder(), activeProfile + "/keys.txt_temp");
 		try {
 			writer = new PrintWriter(new FileWriter(file));
-			for (KeyBinding keyBinding : MinecraftClient.getInstance().options.keysAll)
+			for (KeyBinding keyBinding : MinecraftClient.getInstance().options.allKeys)
 				writer.print(keyBinding.getTranslationKey() + ":" + keyBinding.boundKey.toString() + "\n");
 			stream = new FileInputStream(file);
 		} catch (IOException e) {

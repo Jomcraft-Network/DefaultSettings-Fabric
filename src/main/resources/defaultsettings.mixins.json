@@ -3,7 +3,7 @@
   "minVersion": "0.8",
   "package": "net.jomcraft.defaultsettings.mixin",
  
-  "compatibilityLevel": "JAVA_16",
+  "compatibilityLevel": "JAVA_17",
   "client": [
     "DefaultSettingsMixin"
   ],
