@@ -521,7 +521,7 @@ public class FileUtil {
 			File filec = new File(mcDataDir, "config");
 			Collection<File> config = FileUtils.listFilesAndDirs(new File(getMainFolder(), activeProfile), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
 			for (File configFile : config) {
-				if (!configFile.isDirectory() && !configFile.getName().equals("ignore.json") && !optUse.contains(configFile.getName())) {
+				if (!configFile.isDirectory() && !configFile.getName().contains("defaultsettings") && !configFile.getName().equals("ignore.json") && !optUse.contains(configFile.getName())) {
 					String relativePath = configFile.getPath().substring((mcDataDir.getPath().length()));
 					String pathString = activeProfile + "/" + relativePath.split("defaultsettings")[1].substring(1).split(activeProfile)[1].substring(1);
 
@@ -1173,7 +1173,7 @@ public class FileUtil {
 
 			Collection<File> config = FileUtils.listFilesAndDirs(new File(getMainFolder(), activeProfile), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
 			for (File configFile : config) {
-				if (!(configFile.getName().equals(activeProfile) || optUse.contains(configFile.getName())))
+				if (!(configFile.getName().equals(activeProfile) || configFile.getName().contains("defaultsettings") || optUse.contains(configFile.getName())))
 					return false;
 			}
 
@@ -1190,7 +1190,7 @@ public class FileUtil {
 
 			Collection<File> config = FileUtils.listFilesAndDirs(new File(getMainFolder(), activeProfile), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
 			for (File configFile : config) {
-				if (!configFile.isDirectory() && !configFile.getName().equals("ignore.json") && !optUse.contains(configFile.getName())) {
+				if (!configFile.isDirectory() && !configFile.getName().contains("defaultsettings") && !configFile.getName().equals("ignore.json") && !optUse.contains(configFile.getName())) {
 					String relativePath = configFile.getPath().substring((mcDataDir.getPath().length()));
 					String pathString = activeProfile + "/" + relativePath.split("defaultsettings")[1].substring(1).split(activeProfile)[1].substring(1);
 
@@ -1305,7 +1305,7 @@ public class FileUtil {
 		// TrueFileFilter.INSTANCE);
 		ArrayList<String> files = new ArrayList<String>();
 		for (File configFile : new File(getMainFolder(), activeProfile).listFiles()) {
-			if (!configFile.getName().equals("ignore.json")) {
+			if (!configFile.getName().equals("ignore.json") && !configFile.getName().contains("defaultsettings")) {
 				if (optUse.contains(configFile.getName()))
 					continue;
 				String relativePath = configFile.getPath().substring((mcDataDir.getPath().length()));
@@ -1326,7 +1326,7 @@ public class FileUtil {
 		}
 
 		for (File configFile : config) {
-			if (!configFile.isDirectory() && !configFile.getName().equals("ignore.json")) {
+			if (!configFile.isDirectory() && !configFile.getName().equals("ignore.json") && !configFile.getName().contains("defaultsettings")) {
 				if (optUse.contains(configFile.getName()) && configs)
 					continue;
 				String relativePath = configFile.getPath().substring((mcDataDir.getPath().length()));
