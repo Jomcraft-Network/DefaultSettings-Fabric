@@ -8,9 +8,9 @@ targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = "DefaultSettings"
 
-version = "1.17.x-3.5.0"
+version = "1.17.x-3.5.1"
 
-def fileVersion = "3.5.0"
+def fileVersion = "3.5.1"
 
 group = "net.jomcraft.defaultsettings"
 
