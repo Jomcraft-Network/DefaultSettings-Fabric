@@ -12,3 +12,4 @@
 !/pubkey.gpg
 !/.github/
 !/settings.gradle
+!/gradle.properties
