@@ -1,39 +1,15 @@
-# gradle
-
-.gradle/
-build/
-out/
-classes/
-
-# eclipse
-
-*.launch
-
-# idea
-
-logs/
-
-keyring.gpg
-
-keystore.jks
-
-.idea/
-*.iml
-*.ipr
-*.iws
-
-# vscode
-
-.settings/
-.vscode/
-bin/
-.classpath
-.project
-
-# macos
-
-*.DS_Store
-
-# fabric
-
-run/
+/*
+/*/
+!/src/
+!/gradlew.bat
+!/gradlew
+!/build.gradle
+!/.gitignore
+!/changelog.html
+!/gradle/
+!/README.md
+!/LICENSE
+!/pubkey.gpg
+!/Jenkinsfile
+!/.github/
+!/settings.gradle
