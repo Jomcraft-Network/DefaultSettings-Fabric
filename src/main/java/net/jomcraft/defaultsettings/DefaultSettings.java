@@ -1,35 +1,45 @@
 package net.jomcraft.defaultsettings;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import javax.net.ssl.HttpsURLConnection;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.mojang.brigadier.arguments.ArgumentType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.jomcraft.defaultsettings.commands.CommandDefaultSettings;
+import net.jomcraft.defaultsettings.commands.ConfigArguments;
+import net.jomcraft.defaultsettings.commands.OperationArguments;
+import net.jomcraft.defaultsettings.commands.TypeArguments;
+import net.minecraft.command.argument.ArgumentTypes;
+import net.minecraft.command.argument.serialize.ArgumentSerializer;
 
 public class DefaultSettings implements ModInitializer {
 
 	public static final String MODID = "defaultsettings";
 	public static final Logger log = LogManager.getLogger(DefaultSettings.MODID);
-	public static final String USER_AGENT = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2";
 	public static final String VERSION = "3.5.1";
 	public static Map<String, KeyContainer> keyRebinds = new HashMap<String, KeyContainer>();
 	public static DefaultSettings instance;
+
+	public static synchronized <A extends ArgumentType<?>, T extends ArgumentSerializer.ArgumentTypeProperties<A>, I extends ArgumentSerializer<A, T>> I registerByClass(Class<A> infoClass, I argumentTypeInfo) {
+		ArgumentTypes.CLASS_MAP.put(infoClass, argumentTypeInfo);
+		return argumentTypeInfo;
+	}
 
 	@Override
 	public void onInitialize() {
 		instance = this;
 
-		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-			if (!dedicated) {
+		registerByClass(ConfigArguments.class, new ConfigArguments.Serializer());
+		registerByClass(OperationArguments.class, new OperationArguments.Serializer());
+		registerByClass(TypeArguments.class, new TypeArguments.Serializer());
+
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+			if (!environment.dedicated) {
 				CommandDefaultSettings.register(dispatcher);
 			}
 		});
@@ -47,42 +57,9 @@ public class DefaultSettings implements ModInitializer {
 
 		);
 
-		(new Thread() {
-
-			@Override
-			public void run() {
-				try {
-					sendCount();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-			}
-
-		}).start();
 	}
 
 	public static DefaultSettings getInstance() {
 		return instance;
-	}
-
-	public static void sendCount() throws Exception {
-		String url = "https://apiv1.jomcraft.net/count";
-		String jsonString = "{\"id\":\"Defaultsettings\", \"code\":" + RandomStringUtils.random(32, true, true) + "}";
-		URL obj = new URL(url);
-		HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
-		con.setRequestMethod("POST");
-		con.setRequestProperty("User-Agent", USER_AGENT);
-		con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-
-		con.setDoOutput(true);
-		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-		wr.writeBytes(jsonString);
-
-		wr.flush();
-		wr.close();
-		con.getResponseCode();
-		con.disconnect();
-
 	}
 }
