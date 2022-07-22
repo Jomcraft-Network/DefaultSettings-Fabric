@@ -12,5 +12,8 @@ public interface DefaultSettingsMixin {
 	@Accessor("defaultKey")
 	@Mutable
 	public void setDefaultKey(InputUtil.Key key);
+	
+	@Accessor("boundKey")
+	public InputUtil.Key getBoundKey();
 
 }
