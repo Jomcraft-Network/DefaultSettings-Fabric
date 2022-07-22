@@ -1,6 +1,6 @@
 package net.jomcraft.defaultsettings;
 
-import net.minecraft.client.util.InputUtil;
+import com.mojang.blaze3d.platform.InputUtil;
 
 public class KeyContainer {
 

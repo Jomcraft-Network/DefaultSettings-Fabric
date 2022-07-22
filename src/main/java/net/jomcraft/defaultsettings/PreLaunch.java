@@ -4,6 +4,7 @@ import java.io.File;
 import org.apache.logging.log4j.Level;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 
+@SuppressWarnings("deprecation")
 public class PreLaunch implements PreLaunchEntrypoint {
 
 	@Override

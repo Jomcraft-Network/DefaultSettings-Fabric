@@ -11,9 +11,9 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.serialize.ArgumentSerializer;
+import net.minecraft.command.argument.ArgumentTypeInfo;
 import net.minecraft.network.PacketByteBuf;
 
 public class OperationArguments implements ArgumentType<String> {
@@ -49,44 +49,44 @@ public class OperationArguments implements ArgumentType<String> {
 		return ARGUMENTS;
 	}
 	
-	public static class Serializer implements ArgumentSerializer<OperationArguments, Serializer.Properties> {
+	public static class Serializer implements ArgumentTypeInfo<OperationArguments, Serializer.Template> {
 
 		@Override
-		public void writePacket(Serializer.Properties var1, PacketByteBuf var2) {
-			var2.writeBoolean(var1.limited);
+		public void serializeToNetwork(Template template, PacketByteBuf buf) {
+			buf.writeBoolean(template.limited);
 		}
 
 		@Override
-		public Serializer.Properties fromPacket(PacketByteBuf var1) {
-			boolean limited = var1.readBoolean();
-			return new Properties(limited);
+		public Template deserializeFromNetwork(PacketByteBuf buf) {
+			boolean limited = buf.readBoolean();
+			return new Template(limited);
 		}
 
 		@Override
-		public void writeJson(Serializer.Properties var1, JsonObject var2) {
-			var2.addProperty("limited", var1.limited);
+		public void serializeToJson(Template template, JsonObject jsonObject) {
+			jsonObject.addProperty("limited", template.limited);
 		}
 
 		@Override
-		public Serializer.Properties getArgumentTypeProperties(OperationArguments var1) {
-			return new Properties(var1.limited);
+		public Template unpack(OperationArguments type) {
+			return new Template(type.limited);
 		}
-
-		public final class Properties implements ArgumentSerializer.ArgumentTypeProperties<OperationArguments> {
+		
+		public final class Template implements ArgumentTypeInfo.Template<OperationArguments> {
 			
 			final boolean limited;
 
-			Properties(boolean limited) {
+			Template(boolean limited) {
 				this.limited = limited;
 			}
 
 			@Override
-			public OperationArguments createType(CommandRegistryAccess commandRegistryAccess) {
+			public OperationArguments instantiate(CommandBuildContext context) {
 				return new OperationArguments(this.limited);
 			}
 
 			@Override
-			public ArgumentSerializer<OperationArguments, ?> getSerializer() {
+			public ArgumentTypeInfo<OperationArguments, ?> type() {
 				return Serializer.this;
 			}
 		}

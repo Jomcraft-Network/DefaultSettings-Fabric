@@ -1,0 +1,46 @@
+{
+	"schema_version": 1,
+	"quilt_loader": {
+		"group": "net.defaultsettings",
+		"id": "defaultsettings",
+		"version": "${version}",
+		"metadata": {
+			"name": "DefaultSettings",
+			"description": "Keep your game's local settings in case of an update to your modpack",
+			"contributors": {
+				"Jomcraft Network": "Owner"
+			},
+			"license": "Apache-2.0",
+			"contact": {
+				"homepage": "https://www.curseforge.com/minecraft/mc-mods/defaultsettings-fabric",
+				"sources": "https://github.com/Jomcraft-Network/DefaultSettings-Fabric",
+				"issues": "https://github.com/Jomcraft-Network/DefaultSettings-Fabric/issues"
+			},
+			"icon": "assets/defaultsettings/defaultsettings.png"
+		},
+		"intermediate_mappings": "net.fabricmc:intermediary",
+		"entrypoints": {
+			"init": [
+				"net.jomcraft.defaultsettings.DefaultSettings"
+			],
+			"preLaunch": [
+				"net.jomcraft.defaultsettings.PreLaunch"
+			]
+		},
+		"depends": [
+			{
+				"id": "quilt_loader",
+				"versions": ">=0.17.0-"
+			},
+			{
+				"id": "quilted_fabric_api",
+				"versions": ">=2.0.0-"
+			},
+			{
+				"id": "minecraft",
+				"versions": ">=1.19"
+			}
+		]
+	},
+	"mixin": "defaultsettings.mixins.json"
+}

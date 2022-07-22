@@ -6,16 +6,18 @@ import java.util.Map;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
+import org.quiltmc.qsl.lifecycle.api.client.event.ClientLifecycleEvents;
+
 import com.mojang.brigadier.arguments.ArgumentType;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.jomcraft.defaultsettings.commands.CommandDefaultSettings;
 import net.jomcraft.defaultsettings.commands.ConfigArguments;
 import net.jomcraft.defaultsettings.commands.OperationArguments;
 import net.jomcraft.defaultsettings.commands.TypeArguments;
-import net.minecraft.command.argument.ArgumentTypes;
-import net.minecraft.command.argument.serialize.ArgumentSerializer;
+import net.minecraft.command.argument.ArgumentTypeInfo;
+import net.minecraft.command.argument.ArgumentTypeInfos;
 
 public class DefaultSettings implements ModInitializer {
 
@@ -25,13 +27,13 @@ public class DefaultSettings implements ModInitializer {
 	public static Map<String, KeyContainer> keyRebinds = new HashMap<String, KeyContainer>();
 	public static DefaultSettings instance;
 
-	public static synchronized <A extends ArgumentType<?>, T extends ArgumentSerializer.ArgumentTypeProperties<A>, I extends ArgumentSerializer<A, T>> I registerByClass(Class<A> infoClass, I argumentTypeInfo) {
-		ArgumentTypes.CLASS_MAP.put(infoClass, argumentTypeInfo);
+	public static synchronized <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>, I extends ArgumentTypeInfo<A, T>> I registerByClass(Class<A> infoClass, I argumentTypeInfo) {
+		ArgumentTypeInfos.BY_CLASS.put(infoClass, argumentTypeInfo);
 		return argumentTypeInfo;
 	}
 
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer mod) {
 		instance = this;
 
 		registerByClass(ConfigArguments.class, new ConfigArguments.Serializer());
@@ -43,8 +45,8 @@ public class DefaultSettings implements ModInitializer {
 				CommandDefaultSettings.register(dispatcher);
 			}
 		});
-
-		ClientLifecycleEvents.CLIENT_STARTED.register((test) -> {
+		
+		ClientLifecycleEvents.READY.register((test) -> {
 			try {
 
 				FileUtil.restoreKeys(true, FileUtil.firstBootUp);

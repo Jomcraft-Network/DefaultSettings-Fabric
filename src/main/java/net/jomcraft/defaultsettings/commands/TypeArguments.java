@@ -11,9 +11,9 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.serialize.ArgumentSerializer;
+import net.minecraft.command.argument.ArgumentTypeInfo;
 import net.minecraft.network.PacketByteBuf;
 
 public class TypeArguments implements ArgumentType<String> {
@@ -43,43 +43,42 @@ public class TypeArguments implements ArgumentType<String> {
 		return ARGUMENTS;
 	}
 
-	public static class Serializer implements ArgumentSerializer<TypeArguments, Serializer.Properties> {
+	public static class Serializer implements ArgumentTypeInfo<TypeArguments, Serializer.Template> {
 
 		@Override
-		public void writePacket(Serializer.Properties var1, PacketByteBuf var2) {
+		public void serializeToNetwork(Template template, PacketByteBuf buf) {
+			
+		}
+
+		@Override
+		public Template deserializeFromNetwork(PacketByteBuf buf) {
+			return new Template();
+		}
+
+		@Override
+		public void serializeToJson(Template template, JsonObject jsonObject) {
+			
+		}
+
+		@Override
+		public Template unpack(TypeArguments type) {
+			return new Template();
+		}
 		
-			
-		}
-
-		@Override
-		public Serializer.Properties fromPacket(PacketByteBuf var1) {
-			return new Properties();
-		}
-
-		@Override
-		public void writeJson(Serializer.Properties var1, JsonObject var2) {
-			
-		}
-
-		@Override
-		public Serializer.Properties getArgumentTypeProperties(TypeArguments var1) {
-			return new Properties();
-		}
-
-		public final class Properties implements ArgumentSerializer.ArgumentTypeProperties<TypeArguments> {
+		public final class Template implements ArgumentTypeInfo.Template<TypeArguments> {
 			
 
-			Properties() {
+			Template() {
 			
 			}
 
 			@Override
-			public TypeArguments createType(CommandRegistryAccess commandRegistryAccess) {
+			public TypeArguments instantiate(CommandBuildContext context) {
 				return new TypeArguments();
 			}
 
 			@Override
-			public ArgumentSerializer<TypeArguments, ?> getSerializer() {
+			public ArgumentTypeInfo<TypeArguments, ?> type() {
 				return Serializer.this;
 			}
 		}

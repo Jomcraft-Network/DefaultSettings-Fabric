@@ -33,19 +33,19 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.logging.log4j.Level;
+import org.quiltmc.loader.api.QuiltLoader;
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import net.fabricmc.loader.api.FabricLoader;
+import com.mojang.blaze3d.platform.InputUtil;
 import net.jomcraft.defaultsettings.mixin.DefaultSettingsMixin;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.option.KeyBind;
 
 public class FileUtil {
 
-	public static final File mcDataDir = FabricLoader.getInstance().getGameDir().toFile();
+	public static final File mcDataDir = QuiltLoader.getGameDir().toFile();
 	public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	public static MainJSON mainJson;
 	public static PrivateJSON privateJson;
@@ -796,7 +796,7 @@ public class FileUtil {
 					}
 				}
 
-				for (KeyBinding keyBinding : MinecraftClient.getInstance().options.allKeys) {
+				for (KeyBind keyBinding : MinecraftClient.getInstance().options.allKeys) {
 					if (DefaultSettings.keyRebinds.containsKey(keyBinding.getTranslationKey())) {
 						KeyContainer container = DefaultSettings.keyRebinds.get(keyBinding.getTranslationKey());
 
@@ -956,7 +956,7 @@ public class FileUtil {
 		PrintWriter writer = null;
 		try {
 			writer = new PrintWriter(new FileWriter(new File(getMainFolder(), activeProfile + "/keys.txt")));
-			for (KeyBinding keyBinding : MinecraftClient.getInstance().options.allKeys)
+			for (KeyBind keyBinding : MinecraftClient.getInstance().options.allKeys)
 				writer.print(keyBinding.getTranslationKey() + ":" + keyBinding.boundKey.toString() + "\n");
 
 		} catch (IOException e) {
@@ -1095,7 +1095,7 @@ public class FileUtil {
 		File file = new File(getMainFolder(), activeProfile + "/keys.txt_temp");
 		try {
 			writer = new PrintWriter(new FileWriter(file));
-			for (KeyBinding keyBinding : MinecraftClient.getInstance().options.allKeys)
+			for (KeyBind keyBinding : MinecraftClient.getInstance().options.allKeys)
 				writer.print(keyBinding.getTranslationKey() + ":" + keyBinding.boundKey.toString() + "\n");
 			stream = new FileInputStream(file);
 		} catch (IOException e) {
