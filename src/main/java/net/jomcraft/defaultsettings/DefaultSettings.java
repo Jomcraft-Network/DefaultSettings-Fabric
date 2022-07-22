@@ -10,14 +10,13 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientLifecycleEvents;
-
 import com.mojang.brigadier.arguments.ArgumentType;
 import net.jomcraft.defaultsettings.commands.CommandDefaultSettings;
 import net.jomcraft.defaultsettings.commands.ConfigArguments;
 import net.jomcraft.defaultsettings.commands.OperationArguments;
 import net.jomcraft.defaultsettings.commands.TypeArguments;
+import net.jomcraft.defaultsettings.mixin.DefaultSettingsMixinCommands;
 import net.minecraft.command.argument.ArgumentTypeInfo;
-import net.minecraft.command.argument.ArgumentTypeInfos;
 
 public class DefaultSettings implements ModInitializer {
 
@@ -28,7 +27,7 @@ public class DefaultSettings implements ModInitializer {
 	public static DefaultSettings instance;
 
 	public static synchronized <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>, I extends ArgumentTypeInfo<A, T>> I registerByClass(Class<A> infoClass, I argumentTypeInfo) {
-		ArgumentTypeInfos.BY_CLASS.put(infoClass, argumentTypeInfo);
+		DefaultSettingsMixinCommands.getClassList().put(infoClass, argumentTypeInfo);
 		return argumentTypeInfo;
 	}
 

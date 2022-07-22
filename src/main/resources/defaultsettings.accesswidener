@@ -1,5 +1,3 @@
 accessWidener	v1	named
 
 accessible field net/minecraft/client/option/KeyBind boundKey Lcom/mojang/blaze3d/platform/InputUtil$Key;
-
-accessible field net/minecraft/command/argument/ArgumentTypeInfos BY_CLASS Ljava/util/Map;
