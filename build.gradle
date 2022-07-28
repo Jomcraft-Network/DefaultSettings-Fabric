@@ -5,9 +5,9 @@ plugins {
 
 archivesBaseName = "DefaultSettings"
 
-version = "1.19.x-3.5.1"
+version = "1.19.x-3.5.2"
 
-def fileVersion = "3.5.1"
+def fileVersion = "3.5.2"
 
 group = "net.jomcraft.defaultsettings"
 
