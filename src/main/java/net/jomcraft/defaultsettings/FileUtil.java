@@ -62,7 +62,7 @@ public class FileUtil {
 
 		@Override
 		public boolean accept(File file) {
-			if (!file.getName().equals("defaultsettings") && !file.getName().equals("defaultsettings.json") && !file.getName().equals("sharedConfigs") && !file.getName().equals("ignore.json") && !file.getName().equals("ds_dont_export.json") && !file.getName().equals("keys.txt") && !file.getName().equals("options.txt") && !file.getName().equals("optionsof.txt") && !file.getName().equals("optionsshaders.txt") && !file.getName().equals("servers.dat") /*																																																																																																										 *//* ? true : getMainJSON().activeConfigs.contains(file.getName()) *//* ) */)
+			if (!file.getName().equals("defaultsettings") && !file.getName().equals("defaultsettings.json") && !file.getName().equals("sharedConfigs") && !file.getName().equals("ignore.json") && !file.getName().equals("ds_dont_export.json") && !file.getName().equals("keys.txt") && !file.getName().equals("options.txt") && !file.getName().equals("optionsof.txt") && !file.getName().equals("optionsshaders.txt") && !file.getName().equals("options.justenoughkeys.txt") && !file.getName().equals("servers.dat") /*																																																																																																										 *//* ? true : getMainJSON().activeConfigs.contains(file.getName()) *//* ) */)
 				return true;
 
 			return false;
@@ -73,7 +73,7 @@ public class FileUtil {
 
 		@Override
 		public boolean accept(File file) {
-			if (!file.getName().equals("defaultsettings") && !file.getName().equals("defaultsettings.json") && !file.getName().equals("sharedConfigs") && !file.getName().equals("ignore.json") && !file.getName().equals("ds_dont_export.json") && !file.getName().equals("keys.txt") && !file.getName().equals("options.txt") && !file.getName().equals("optionsof.txt") && !file.getName().equals("optionsshaders.txt") && !file.getName().equals("servers.dat")/* && !getMainJSON().activeConfigs.contains(file.getName()) */)
+			if (!file.getName().equals("defaultsettings") && !file.getName().equals("defaultsettings.json") && !file.getName().equals("sharedConfigs") && !file.getName().equals("ignore.json") && !file.getName().equals("ds_dont_export.json") && !file.getName().equals("keys.txt") && !file.getName().equals("options.txt") && !file.getName().equals("optionsof.txt") && !file.getName().equals("optionsshaders.txt") && !file.getName().equals("options.justenoughkeys.txt") && !file.getName().equals("servers.dat")/* && !getMainJSON().activeConfigs.contains(file.getName()) */)
 				return true;
 
 			return false;
@@ -85,7 +85,7 @@ public class FileUtil {
 		@Override
 		public boolean accept(File file) {
 
-			if (!file.getName().equals("defaultsettings") && !file.getName().equals("defaultsettings.json") && !file.getName().equals("ds_dont_export.json") && !file.getName().equals("keys.txt") && !file.getName().equals("options.txt") && !file.getName().equals("optionsof.txt") && !file.getName().equals("optionsshaders.txt") && !file.getName().equals("servers.dat") && !new File(FileUtil.getMainFolder(), "sharedConfigs/" + file.getName()).exists())
+			if (!file.getName().equals("defaultsettings") && !file.getName().equals("defaultsettings.json") && !file.getName().equals("ds_dont_export.json") && !file.getName().equals("keys.txt") && !file.getName().equals("options.txt") && !file.getName().equals("optionsof.txt") && !file.getName().equals("optionsshaders.txt") && !file.getName().equals("options.justenoughkeys.txt") && !file.getName().equals("servers.dat") && !new File(FileUtil.getMainFolder(), "sharedConfigs/" + file.getName()).exists())
 				return true;
 
 			return false;
@@ -108,7 +108,7 @@ public class FileUtil {
 				@Override
 				public boolean accept(File file) {
 
-					if (!file.getName().equals("defaultsettings") && !file.getName().equals("defaultsettings.json") && !file.getName().equals("ds_dont_export.json") && !file.getName().equals("keys.txt") && !file.getName().equals("options.txt") && !file.getName().equals("optionsof.txt") && !file.getName().equals("optionsshaders.txt") && !file.getName().equals("servers.dat") && !new File(FileUtil.getMainFolder(), "sharedConfigs/" + file.getName()).exists() && file.getName().toLowerCase().startsWith(query.toLowerCase()))
+					if (!file.getName().equals("defaultsettings") && !file.getName().equals("defaultsettings.json") && !file.getName().equals("ds_dont_export.json") && !file.getName().equals("keys.txt") && !file.getName().equals("options.txt") && !file.getName().equals("optionsof.txt") && !file.getName().equals("optionsshaders.txt") && !file.getName().equals("options.justenoughkeys.txt") && !file.getName().equals("servers.dat") && !new File(FileUtil.getMainFolder(), "sharedConfigs/" + file.getName()).exists() && file.getName().toLowerCase().startsWith(query.toLowerCase()))
 						return true;
 
 					return false;
@@ -321,6 +321,10 @@ public class FileUtil {
 		if (!optionsShaders.exists())
 			restoreOptionsShaders();
 
+		final File optionsJEK = new File(mcDataDir, "options.justenoughkeys.txt");
+		if (!optionsJEK.exists())
+			restoreOptionsJEK();
+
 		final File serversFile = new File(mcDataDir, "servers.dat");
 		if (!serversFile.exists())
 			restoreServers();
@@ -331,6 +335,8 @@ public class FileUtil {
 	}
 
 	private static boolean switchProfile() throws IOException {
+		if (mainJson.generatedBy.equals("<default>"))
+			mainJson.generatedBy = privateJson.privateIdentifier;
 		if (!privateJson.currentProfile.equals(privateJson.targetProfile)) {
 
 			Date date = new Date();
@@ -506,6 +512,8 @@ public class FileUtil {
 							restoreOptionsOF();
 						} else if (opt.equals("optionsshaders.txt")) {
 							restoreOptionsShaders();
+						} else if (opt.equals("options.justenoughkeys.txt")) {
+							restoreOptionsJEK();
 						} else if (opt.equals("servers.dat")) {
 							restoreServers();
 						}
@@ -656,7 +664,8 @@ public class FileUtil {
 		final File optionsFile = new File(getMainFolder(), activeProfile + "/options.txt");
 		final File optionsofFile = new File(getMainFolder(), activeProfile + "/optionsof.txt");
 		final File optionsShadersFile = new File(getMainFolder(), activeProfile + "/optionsshaders.txt");
-		return optionsFile.exists() || optionsofFile.exists() || optionsShadersFile.exists();
+		final File optionsJEKFile = new File(getMainFolder(), activeProfile + "/options.justenoughkeys.txt");
+		return optionsFile.exists() || optionsofFile.exists() || optionsShadersFile.exists() || optionsJEKFile.exists();
 	}
 
 	public static boolean keysFileExist() {
@@ -678,6 +687,7 @@ public class FileUtil {
 		new File(getMainFolder(), activeProfile + "/options.txt").delete();
 		new File(getMainFolder(), activeProfile + "/optionsof.txt").delete();
 		new File(getMainFolder(), activeProfile + "/optionsshaders.txt").delete();
+		new File(getMainFolder(), activeProfile + "/options.justenoughkeys.txt").delete();
 		FileUtil.options_exists = false;
 	}
 
@@ -871,6 +881,35 @@ public class FileUtil {
 		}
 	}
 
+	public static void restoreOptionsJEK() throws IOException {
+		final File optionsJEKFile = new File(getMainFolder(), activeProfile + "/options.justenoughkeys.txt");
+		if (optionsJEKFile.exists()) {
+			BufferedReader reader = null;
+			PrintWriter writer = null;
+			try {
+				reader = new BufferedReader(new FileReader(optionsJEKFile));
+				writer = new PrintWriter(new FileWriter(new File(mcDataDir, "options.justenoughkeys.txt")));
+				String line;
+				while ((line = reader.readLine()) != null) {
+					writer.print(line + "\n");
+				}
+			} catch (IOException e) {
+				throw e;
+			} catch (NullPointerException e) {
+				throw e;
+			} finally {
+				try {
+					reader.close();
+					writer.close();
+				} catch (IOException e) {
+					throw e;
+				} catch (NullPointerException e) {
+					throw e;
+				}
+			}
+		}
+	}
+
 	public static void restoreConfigs() throws IOException {
 		try {
 			FileUtils.copyDirectory(new File(getMainFolder(), activeProfile), new File(mcDataDir, "config"), fileFilterModular);
@@ -905,8 +944,6 @@ public class FileUtil {
 	}
 
 	public static void moveAllConfigs() throws IOException {
-		mainJson.generatedBy = privateJson.privateIdentifier;
-
 		try {
 
 			/*
@@ -965,6 +1002,32 @@ public class FileUtil {
 			throw e;
 		} finally {
 			writer.close();
+		}
+
+		BufferedReader reader = null;
+		if (new File(mcDataDir, "options.justenoughkeys.txt").exists()) {
+
+			try {
+				writer = new PrintWriter(new FileWriter(new File(getMainFolder(), activeProfile + "/options.justenoughkeys.txt")));
+				reader = new BufferedReader(new FileReader(new File(mcDataDir, "options.justenoughkeys.txt")));
+				String line;
+				while ((line = reader.readLine()) != null)
+					writer.print(line + "\n");
+
+			} catch (IOException e) {
+				throw e;
+			} catch (NullPointerException e) {
+				throw e;
+			} finally {
+				try {
+					reader.close();
+					writer.close();
+				} catch (IOException e) {
+					throw e;
+				} catch (NullPointerException e) {
+					throw e;
+				}
+			}
 		}
 	}
 
@@ -1221,6 +1284,7 @@ public class FileUtil {
 			InputStream keys = getKeysStream();
 			InputStream options = getOptionsStream();
 			InputStream optionsOF = getOptionsOFStream();
+			InputStream optionsJEK = getOptionsShadersStream();
 			InputStream optionsShaders = getOptionsShadersStream();
 			InputStream servers = getServersStream();
 
@@ -1257,10 +1321,16 @@ public class FileUtil {
 			String writtenHashShaders = "";
 
 			if (optionsShaders != null) {
-
 				hashShaders = fileToHash(optionsShaders);
 				writtenHashShaders = mainJson.hashes.get(activeProfile + "/optionsshaders.txt");
+			}
 
+			String hashJEK = "";
+			String writtenHashJEK = "";
+
+			if (optionsJEK != null) {
+				hashJEK = fileToHash(optionsJEK);
+				writtenHashJEK = mainJson.hashes.get(activeProfile + "/options.justenoughkeys.txt");
 			}
 
 			String hashS = "";
@@ -1280,6 +1350,8 @@ public class FileUtil {
 			} else if (mainJson.hashes.containsKey(activeProfile + "/optionsof.txt") && !hashOF.equals(writtenHashOF)) {
 				ret = true;
 			} else if (mainJson.hashes.containsKey(activeProfile + "/optionsshaders.txt") && !hashShaders.equals(writtenHashShaders)) {
+				ret = true;
+			} else if (mainJson.hashes.containsKey(activeProfile + "/options.justenoughkeys.txt") && !hashJEK.equals(writtenHashJEK)) {
 				ret = true;
 			} else if (mainJson.hashes.containsKey(activeProfile + "/servers.dat") && !hashS.equals(writtenHashS)) {
 				ret = true;
@@ -1366,6 +1438,7 @@ public class FileUtil {
 			add("servers.dat");
 			add("optionsof.txt");
 			add("optionsshaders.txt");
+			add("options.justenoughkeys.txt");
 			add("keys.txt");
 		}
 	};
