@@ -324,7 +324,7 @@ public class FileUtil {
 		final File optionsJEK = new File(mcDataDir, "options.justenoughkeys.txt");
 		if (!optionsJEK.exists())
 			restoreOptionsJEK();
-		
+
 		final File optionsAmecs = new File(mcDataDir, "options.amecsapi.txt");
 		if (!optionsAmecs.exists())
 			restoreOptionsAmecs();
@@ -917,7 +917,7 @@ public class FileUtil {
 			}
 		}
 	}
-	
+
 	public static void restoreOptionsAmecs() throws IOException {
 		final File optionsJEKFile = new File(getMainFolder(), activeProfile + "/options.amecsapi.txt");
 		if (optionsJEKFile.exists()) {
@@ -1066,7 +1066,7 @@ public class FileUtil {
 				}
 			}
 		}
-		
+
 		if (new File(mcDataDir, "options.amecsapi.txt").exists()) {
 
 			try {
@@ -1212,7 +1212,7 @@ public class FileUtil {
 		}
 		return null;
 	}
-	
+
 	public static InputStream getOptionsJEKStream() throws IOException {
 		final File optionsFile = new File(mcDataDir, "options.justenoughkeys.txt");
 		if (optionsFile.exists()) {
@@ -1220,7 +1220,7 @@ public class FileUtil {
 		}
 		return null;
 	}
-	
+
 	public static InputStream getOptionsAmecsStream() throws IOException {
 		final File optionsFile = new File(mcDataDir, "options.amecsapi.txt");
 		if (optionsFile.exists()) {
@@ -1411,7 +1411,7 @@ public class FileUtil {
 				hashJEK = fileToHash(optionsJEK);
 				writtenHashJEK = mainJson.hashes.get(activeProfile + "/options.justenoughkeys.txt");
 			}
-			
+
 			String hashAmecs = "";
 			String writtenHashAmecs = "";
 
