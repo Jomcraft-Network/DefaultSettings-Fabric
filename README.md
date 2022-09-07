@@ -1,3 +1,5 @@
+[![Version](https://badgen.net/https/apiv3.jomcraft.net/product/defaultsettings%3Fendpoint%3Dfabric?cache=3600)](https://github.com/Jomcraft-Network/DefaultSettings) [![Java CI](https://github.com/Jomcraft-Network/DefaultSettings-Fabric/actions/workflows/build.yml/badge.svg?branch=1.18.x)](https://github.com/Jomcraft-Network/DefaultSettings-Fabric/actions/workflows/build.yml)
+
 ### DefaultSettings Fabric
 
 ---
